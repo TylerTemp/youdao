@@ -21,7 +21,7 @@ along with PyStarDict.  If not, see <http://www.gnu.org/licenses/>.
 """
 import gzip
 import warnings
-from . import CPyStarDictIndex
+# from . import CPyStarDictIndex
 # import cppimport
 # CPyStarDictIndex = cppimport.imp("youdao.lib.CPyStarDictIndex")
 
@@ -29,28 +29,28 @@ from . import CPyStarDictIndex
 class _StarDictIfo(object):
     """
     The .ifo file has the following format:
-    
+
     StarDict's dict ifo file
     version=2.4.2
     [options]
-    
+
     Note that the current "version" string must be "2.4.2" or "3.0.0".  If it's not,
     then StarDict will refuse to read the file.
     If version is "3.0.0", StarDict will parse the "idxoffsetbits" option.
-    
+
     [options]
     ---------
     In the example above, [options] expands to any of the following lines
     specifying information about the dictionary.  Each option is a keyword
     followed by an equal sign, then the value of that option, then a
     newline.  The options may be appear in any order.
-    
-    Note that the dictionary must have at least a bookname, a wordcount and a 
-    idxfilesize, or the load will fail.  All other information is optional.  All 
+
+    Note that the dictionary must have at least a bookname, a wordcount and a
+    idxfilesize, or the load will fail.  All other information is optional.  All
     strings should be encoded in UTF-8.
-    
+
     Available options:
-    
+
     bookname=      // required
     wordcount=     // required
     synwordcount=  // required if ".syn" file exists.
@@ -128,13 +128,13 @@ class _StarDictIfo(object):
 class _StarDictIdx(object):
     """
     The .idx file is just a word list.
-    
+
     The word list is a sorted list of word entries.
-    
+
     Each entry in the word list contains three fields, one after the other:
          word_str;  // a utf-8 string terminated by '\0'.
          word_data_offset;  // word data's offset in .dict file
-         word_data_size;  // word data's total size in .dict file 
+         word_data_size;  // word data's total size in .dict file
     """
     def __init__(self, dict_prefix, container):
         self._container = container
@@ -146,7 +146,7 @@ class _StarDictIdx(object):
     def __getitem__(self, word):
         """
         returns tuple (word_data_offset, word_data_size,) for word in .dict
-        
+
         @note: here may be placed flexible search realization
         """
         # word = word.encode("utf-8")
@@ -204,7 +204,7 @@ class _StarDictDict(object):
     """
     The .dict file is a pure data sequence, as the offset and size of each
     word is recorded in the corresponding .idx file.
-    
+
     If the "sametypesequence" option is not used in the .ifo file, then
     the .dict file has fields in the following order:
     ==============
@@ -222,8 +222,8 @@ class _StarDictDict(object):
     own length, as described below.  The number of possible fields per
     word is also not fixed, and is determined by simply reading data until
     you've read word_data_size bytes for that word.
-    
-    
+
+
     Suppose the "sametypesequence" option is used in the .idx file, and
     the option is set like this:
     sametypesequence=tm
@@ -240,74 +240,74 @@ class _StarDictDict(object):
     the type chars and of the last field's size information are the
     optimizations required by the "sametypesequence" option described
     above.
-    
-    If "idxoffsetbits=64", the file size of the .dict file will be bigger 
-    than 4G. Because we often need to mmap this large file, and there is 
-    a 4G maximum virtual memory space limit in a process on the 32 bits 
-    computer, which will make we can get error, so "idxoffsetbits=64" 
-    dictionary can't be loaded in 32 bits machine in fact, StarDict will 
-    simply print a warning in this case when loading. 64-bits computers 
+
+    If "idxoffsetbits=64", the file size of the .dict file will be bigger
+    than 4G. Because we often need to mmap this large file, and there is
+    a 4G maximum virtual memory space limit in a process on the 32 bits
+    computer, which will make we can get error, so "idxoffsetbits=64"
+    dictionary can't be loaded in 32 bits machine in fact, StarDict will
+    simply print a warning in this case when loading. 64-bits computers
     should haven't this limit.
-    
+
     Type identifiers
     ----------------
     Here are the single-character type identifiers that may be used with
     the "sametypesequence" option in the .idx file, or may appear in the
     dict file itself if the "sametypesequence" option is not used.
-    
+
     Lower-case characters signify that a field's size is determined by a
     terminating '\0', while upper-case characters indicate that the data
-    begins with a network byte-ordered guint32 that gives the length of 
+    begins with a network byte-ordered guint32 that gives the length of
     the following data's size(NOT the whole size which is 4 bytes bigger).
-    
+
     'm'
     Word's pure text meaning.
     The data should be a utf-8 string ending with '\0'.
-    
+
     'l'
     Word's pure text meaning.
     The data is NOT a utf-8 string, but is instead a string in locale
     encoding, ending with '\0'.  Sometimes using this type will save disk
     space, but its use is discouraged.
-    
+
     'g'
     A utf-8 string which is marked up with the Pango text markup language.
     For more information about this markup language, See the "Pango
     Reference Manual."
     You might have it installed locally at:
     file:///usr/share/gtk-doc/html/pango/PangoMarkupFormat.html
-    
+
     't'
     English phonetic string.
     The data should be a utf-8 string ending with '\0'.
-    
+
     Here are some utf-8 phonetic characters:
     θʃŋʧðʒæıʌʊɒɛəɑɜɔˌˈːˑṃṇḷ
     æɑɒʌәєŋvθðʃʒɚːɡˏˊˋ
-    
+
     'x'
     A utf-8 string which is marked up with the xdxf language.
     See http://xdxf.sourceforge.net
     StarDict have these extention:
-    <rref> can have "type" attribute, it can be "image", "sound", "video" 
+    <rref> can have "type" attribute, it can be "image", "sound", "video"
     and "attach".
     <kref> can have "k" attribute.
-    
+
     'y'
     Chinese YinBiao or Japanese KANA.
     The data should be a utf-8 string ending with '\0'.
-    
+
     'k'
     KingSoft PowerWord's data. The data is a utf-8 string ending with '\0'.
     It is in XML format.
-    
+
     'w'
     MediaWiki markup language.
     See http://meta.wikimedia.org/wiki/Help:Editing#The_wiki_markup
-    
+
     'h'
     Html codes.
-    
+
     'r'
     Resource file list.
     The content can be:
@@ -319,17 +319,17 @@ class _StarDictDict(object):
     StarDict will find the files in the Resource Storage.
     The image will be shown, the sound file will have a play button.
     You can "save as" the attachment file and so on.
-    
+
     'W'
     wav file.
     The data begins with a network byte-ordered guint32 to identify the wav
     file's size, immediately followed by the file's content.
-    
+
     'P'
     Picture file.
     The data begins with a network byte-ordered guint32 to identify the picture
     file's size, immediately followed by the file's content.
-    
+
     'X'
     this type identifier is reserved for experimental extensions.
 
@@ -394,24 +394,24 @@ class _StarDictSyn(object):
 class Dictionary(dict):
     """
     Dictionary-like class for lazy manipulating stardict dictionaries
-    
+
     All items of this dictionary are writable and dict is expandable itself,
     but changes are not stored anywhere and available in runtime only.
-    
+
     We assume in this documentation that "x" or "y" is instances of the
     StarDictDict class and "x.{ifo,idx{,.gz},dict{,.dz),syn}" or
     "y.{ifo,idx{,.gz},dict{,.dz),syn}" is files of the corresponding stardict
     dictionaries.
-    
-    
+
+
     Following documentation is from the "dict" class an is subkect to rewrite
     in further impleneted methods:
-    
+
     """
     def __init__(self, filename_prefix, in_memory=False):
         """
         filename_prefix: path to dictionary files without files extensions
-        
+
         initializes new StarDictDict instance from stardict dictionary files
         provided by filename_prefix
         """
@@ -526,14 +526,14 @@ class Dictionary(dict):
 
     def clear(self):
         """
-        clear dict cache 
+        clear dict cache
         """
         self._dict_cache = dict()
 
     def get(self, k, d=''):
         """
         returns translation of the word k from self.dict or d if k not in x.idx
-        
+
         d defaults to empty string
         """
         return k in self and self[k] or d

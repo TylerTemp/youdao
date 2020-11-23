@@ -1,4 +1,7 @@
 # youdao
+
+About this folk: `startdict` removed
+
 ### 简介
 这是一个基于Python 在控制台下查单词的小工具。
 
@@ -35,7 +38,7 @@ __从0.3.0开始添加了对Stardict 的支持__（使用pystardict + C扩展加
 `yd -d keyword` ：删除某个单词  
 
 ### 使用帮助
-``` 
+```
 yd [-a] [-n] [-l] [-c] [-v] [-d word] [-y] [-s path] [--help] word
 [-a] 使用API 而不是解析网页获取结果
 [-n] 强制重新获取, 不管数据库中是否已经保存
@@ -47,7 +50,7 @@ yd [-a] [-n] [-l] [-c] [-v] [-d word] [-y] [-s path] [--help] word
 [-s path] 设置stardict词典路径
 [--help] 显示帮助信息
 ```
-    
+
 ### 安装
 由于使用了C扩展，安装过程中需要vc 或gcc
 #### Ubuntu（Linux）：  

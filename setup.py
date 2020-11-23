@@ -23,15 +23,15 @@ class get_pybind_include(object):
 
 
 ext_modules = [
-    Extension(
-        'youdao.lib.CPyStarDictIndex',
-        ['youdao/lib/CPyStarDictIndex.cpp'],
-        include_dirs=[
-            # Path to pybind11 headers
-            get_pybind_include(),
-            get_pybind_include(user=True)
-        ],
-        language='c++'),
+    # Extension(
+    #     'youdao.lib.CPyStarDictIndex',
+    #     ['youdao/lib/CPyStarDictIndex.cpp'],
+    #     include_dirs=[
+    #         # Path to pybind11 headers
+    #         get_pybind_include(),
+    #         get_pybind_include(user=True)
+    #     ],
+    #     language='c++'),
 ]
 
 
